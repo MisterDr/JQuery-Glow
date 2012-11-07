@@ -33,6 +33,9 @@
         //Check if it is needed to remove effect
         var disable = false;
 
+        var glowEnabled = true;
+        var blinkInterval;
+
         //Check for initial vars and add default values
         //Default color: Red
         //Default size 2 pixels
@@ -49,6 +52,28 @@
 
         if (typeof (options.disable) !== "undefined") {
             disable = true;
+            glowEnabled = false;
+        }
+
+        if (typeof (options.blink) !== "undefined") {
+            if (options.blink) {
+                disable = true;
+                glowEnabled = false;
+                var curObject = this;
+                var curSettings = options;
+
+                blinkInterval = setInterval(function () {
+                    if (glowEnabled) {
+                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color });
+                        glowEnabled = false;
+                    } else {
+                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color, disable: true });
+                        glowEnabled = true;
+                    }
+                }, 1000);
+            } else {
+                clearInterval(blinkInterval);
+            }
         }
 
         $(this).each(function (index) {
@@ -68,22 +93,23 @@
             } else if ($.browser.mozilla) {
                 if (!disable) {
                     $('body').append($('<svg height="0" xmlns="http://www.w3.org/2000/svg">' +
-                    '<filter id="glow2">' +
+                        '<filter id="glow2">' +
                         '<feGaussianBlur in="SourceAlpha" stdDeviation="' + options.radius + '"/>' +
                         '<feOffset dx="0" dy="0" result="offsetblur"/>' +
                         '<feFlood flood-color="' + options.color + '"/>' +
                         '<feComposite in2="offsetblur" operator="in"/>' +
                         '<feMerge>' +
-                            '<feMergeNode/>' +
-                            '<feMergeNode in="SourceGraphic"/>' +
+                        '<feMergeNode/>' +
+                        '<feMergeNode in="SourceGraphic"/>' +
                         '</feMerge>' +
-                    '</filter>' +
-                '</svg>'));
+                        '</filter>' +
+                        '</svg>'));
                     $(this).css('filter', 'url("#glow2")');
                 } else {
                     $(this).css("filter", "");
                 }
             }
         });
-    }
+    };
+    $.fn.glow.enabled = true;
 })(jQuery);
