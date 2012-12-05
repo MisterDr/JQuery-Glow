@@ -20,7 +20,7 @@
         or
             $("#testimg").glow({ disable:true }); 
 
-    Version 1.0
+    Version 1.1
 
 	Tested on:
 	IPad (IOS 6 required), Chrome 18.0, Firefox 16.0.1, IE 9 (Lower versions should work by Microsoft's browser specifications)
@@ -29,9 +29,13 @@
 
 */
 (function ($) {
+    var moved = false;
+    var originalPos = null;
     $.fn.glow = function (options) {
         //Check if it is needed to remove effect
         var disable = false;
+
+        //var oldX = $(this).
 
         var glowEnabled = true;
         var blinkInterval;
@@ -43,6 +47,9 @@
             options = $.extend({
                 radius: "2px"
             }, options);
+        }
+        if (typeof (options.originalPos) !== "undefined") {
+            originalPos = options.originalPos;
         }
         if (typeof (options.color) === "undefined") {
             options = $.extend({
@@ -57,6 +64,8 @@
 
         if (typeof (options.blink) !== "undefined") {
             if (options.blink) {
+                originalPos = $(this).offset();
+
                 disable = true;
                 glowEnabled = false;
                 var curObject = this;
@@ -64,10 +73,15 @@
 
                 blinkInterval = setInterval(function () {
                     if (glowEnabled) {
-                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color });
+
+                        if ($.browser.msie) {
+                            //$(this).offset({ left: $(this).offset().left + 10, top: $(this).offset().top + 10 });
+                        }
+
+                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color, originalPos: originalPos });
                         glowEnabled = false;
                     } else {
-                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color, disable: true });
+                        $(curObject).glow({ radius: curSettings.radius, color: curSettings.color, disable: true, originalPos: originalPos });
                         glowEnabled = true;
                     }
                 }, 1000);
@@ -79,8 +93,14 @@
         $(this).each(function (index) {
             if ($.browser.msie) {
                 if (!disable) {
+                    $(this).offset({ left: $(this).offset().left - parseInt(options.radius), top: $(this).offset().top - parseInt(options.radius) });
                     $(this).css("filter", "progid:DXImageTransform.Microsoft.Glow(color='" + options.color + "',Strength='" + options.radius + "')");
                 } else {
+
+                    if (originalPos != null) {
+                        $(this).offset({ left: originalPos.left, top: originalPos.top });
+                    }
+
                     $(this).css("filter", "");
                 }
             } else if ($.browser.webkit) {
@@ -92,9 +112,9 @@
                 //Mozilla uses SVG effects, so we need add SVG nodes at the HTML
             } else if ($.browser.mozilla) {
                 if (!disable) {
-                    var oId  = $(this).attr("id");
+                    var oId = $(this).attr("id");
                     $('body').append($('<svg height="0" xmlns="http://www.w3.org/2000/svg">' +
-                        '<filter id="glow2'+ oId +'">' +
+                        '<filter id="glow2' + oId + '">' +
                         '<feGaussianBlur in="SourceAlpha" stdDeviation="' + options.radius + '"/>' +
                         '<feOffset dx="0" dy="0" result="offsetblur"/>' +
                         '<feFlood flood-color="' + options.color + '"/>' +
@@ -105,7 +125,7 @@
                         '</feMerge>' +
                         '</filter>' +
                         '</svg>'));
-                    $(this).css('filter', 'url("#glow2'+ oId +'")');
+                    $(this).css('filter', 'url("#glow2' + oId + '")');
                 } else {
                     $(this).css("filter", "");
                 }
