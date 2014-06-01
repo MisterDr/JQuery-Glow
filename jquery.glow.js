@@ -20,14 +20,26 @@
         or
             $("#testimg").glow({ disable:true }); 
 
-    Version 1.1
 
-	Tested on:
-	IPad (IOS 6 required), Chrome 18.0, Firefox 16.0.1, IE 9 (Lower versions should work by Microsoft's browser specifications)
+   Version 1.0
+
+    Tested on:
+    IPad (IOS 6 required), Chrome 18.0, Firefox 16.0.1, IE 9 (Lower versions should work by Microsoft's browser specifications)
     With jQuery 1.7.2
 
+    Version 1.1
 
+         Added blink feature to blink over one second.
+         Example:
+        $("#testimg").glow({ radius: "20", color:"green", disable:true, blink:true }); 
+
+    Version 1.2
+
+         Added configurable blink timegap feature
+         Example:
+        $("#testimg").glow({ radius: "20", color:"green", disable:true, blink:true, timegap:2000 });    
 */
+
 (function ($) {
     var moved = false;
     var originalPos = null;
@@ -39,6 +51,7 @@
 
         var glowEnabled = true;
         var blinkInterval;
+        var IntervalGap = 1000;
 
         //Check for initial vars and add default values
         //Default color: Red
@@ -60,6 +73,16 @@
         if (typeof (options.disable) !== "undefined") {
             disable = true;
             glowEnabled = false;
+        }
+
+        if (typeof (options.timegap) === "undefined") {
+            options = $.extend({
+                timegap: "1000"
+            }, options);
+        }
+
+        if (typeof (options.timegap) !== "undefined") {
+            IntervalGap = options.timegap;
         }
 
         if (typeof (options.blink) !== "undefined") {
@@ -84,7 +107,7 @@
                         $(curObject).glow({ radius: curSettings.radius, color: curSettings.color, disable: true, originalPos: originalPos });
                         glowEnabled = true;
                     }
-                }, 1000);
+                }, IntervalGap);
             } else {
                 clearInterval(blinkInterval);
             }
