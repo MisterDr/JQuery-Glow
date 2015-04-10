@@ -30,3 +30,9 @@
          Added blink feature to blink over one second.
 	     Example:
 		$("#testimg").glow({ radius: "20", color:"green", disable:true, blink:true }); 
+
+    Version 1.2
+
+         Added configurable blink timegap feature
+	     Example:
+		$("#testimg").glow({ radius: "20", color:"green", disable:true, blink:true, timegap:2000 });	
