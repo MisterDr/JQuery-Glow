@@ -36,3 +36,8 @@
          Added configurable blink timegap feature
 	     Example:
 		$("#testimg").glow({ radius: "20", color:"green", disable:true, blink:true, timegap:2000 });	
+     
+    Version 1.3
+
+    Added Edge and fixed older browser support
+
