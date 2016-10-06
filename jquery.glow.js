@@ -198,7 +198,7 @@
                 //Mozilla uses SVG effects, so we need add SVG nodes at the HTML
             } else if (browser == "gecko") {
                 if (!disable) {
-                    $('body').append($('<svg height="0" xmlns="http://www.w3.org/2000/svg">' +
+                    $('body').append($('<svg id="filter_' + oId + '" height="0" xmlns="http://www.w3.org/2000/svg">' +
                         '<filter id="glow2' + oId + '">' +
                         '<feGaussianBlur in="SourceAlpha" stdDeviation="' + options.radius + '"/>' +
                         '<feOffset dx="0" dy="0" result="offsetblur"/>' +
@@ -213,7 +213,7 @@
                     $(this).css('filter', 'url("#glow2' + oId + '")');
                 } else {
                     $(this).css("filter", "");
-                    $('body').find("#" + oId).remove();
+                    $('body').find("#filter_" + oId).remove();
                 }
             }
         });
